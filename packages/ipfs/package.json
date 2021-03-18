@@ -14,6 +14,7 @@
     "dist"
   ],
   "main": "src/index.js",
+  "types": "dist/src/index.d.ts",
   "bin": {
     "jsipfs": "src/cli.js"
   },
@@ -44,7 +45,7 @@
     "update-notifier": "^5.0.0"
   },
   "devDependencies": {
-    "aegir": "^31.0.0",
+    "aegir": "^32.0.2",
     "assert": "^2.0.0",
     "cross-env": "^7.0.0",
     "electron-webrtc": "^0.3.0",
@@ -62,14 +63,6 @@
     "rimraf": "^3.0.2",
     "url": "^0.11.0",
     "wrtc": "^0.4.6"
-  },
-  "typesVersions": {
-    "*": {
-      "*": [
-        "dist/*",
-        "dist/*/index"
-      ]
-    }
   },
   "browser": {
     "./src/cli.js": false,

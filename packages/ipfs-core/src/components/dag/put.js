@@ -1,7 +1,7 @@
 'use strict'
 
 const multicodec = require('multicodec')
-const multihashes = require('multihashing-async').multihashes
+const multihashes = require('multihashing-async').multihash
 
 /**
  * @typedef {import('cids')} CID

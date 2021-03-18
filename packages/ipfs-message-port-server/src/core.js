@@ -14,19 +14,25 @@ const { decodeCID, encodeCID } = require('ipfs-message-port-protocol/src/cid')
  * @typedef {import('ipfs-core-types').IPFS} IPFS
  * @typedef {import('ipfs-core-types/src/root').AddOptions} AddOptions
  * @typedef {import('ipfs-core-types/src/root').AddAllOptions} AddAllOptions
+ * @typedef {import('ipfs-core-types/src/root').IPFSEntry} IPFSEntry
  * @typedef {import("ipfs-message-port-protocol/src/data").Time} Time
- * @typedef {import("ipfs-message-port-protocol/src/data").UnixFSTime} UnixFSTime
  * @typedef {import("ipfs-message-port-protocol/src/data").Mode} Mode
  * @typedef {import("ipfs-message-port-protocol/src/data").HashAlg} HashAlg
  * @typedef {import('ipfs-message-port-protocol/src/data').FileType} FileType
  * @typedef {import('ipfs-message-port-protocol/src/cid').EncodedCID} EncodedCID
  * @typedef {import("./ipfs").FileOutput} FileOutput
- * @typedef {import('./ipfs').FileObject} FileObject
  * @typedef {import('./ipfs').FileContent} DecodedFileContent
  * @typedef {import('./ipfs').FileInput} DecodedFileInput
- * @typedef {import('./ipfs').LsEntry} LsEntry
- * @typedef {import('ipfs-unixfs-importer').ImportResult} ImportResult
+ * @typedef {import('ipfs-core-types/src/basic').ImportSource} ImportSource
+ * @typedef {import('ipfs-core-types/src/basic').ToEntry} ToEntry
+ * @typedef {import('ipfs-core-types/src/root').AddResult} AddResult
  * @typedef {import('ipfs-unixfs-importer').ImportCandidate} ImportCandidate
+ * @typedef {import('ipfs-unixfs').Mtime} Mtime
+ *
+ * @typedef {import('ipfs-message-port-protocol/src/root').EncodedAddInput} EncodedAddInput
+ * @typedef {import('ipfs-message-port-protocol/src/root').EncodedAddAllInput} EncodedAddAllInput
+ * @typedef {import('ipfs-message-port-protocol/src/root').EncodedFileContent} EncodedFileContent
+ * @typedef {import('ipfs-message-port-protocol/src/root').EncodedIPFSEntry} EncodedIPFSEntry
  */
 
 /**
@@ -40,55 +46,19 @@ const { decodeCID, encodeCID } = require('ipfs-message-port-protocol/src/cid')
 
 /**
  * @typedef {Object} AddAllInput
- * @property {MultiFileInput} input
- * @property {RemoteCallback} progress
+ * @property {EncodedAddAllInput} input
+ * @property {RemoteCallback} [progressCallback]
  *
  * @typedef {Object} AddInput
- * @property {SingleFileInput} input
- * @property {RemoteCallback} progress
+ * @property {EncodedAddInput} input
+ * @property {RemoteCallback} [progressCallback]
  *
  * @typedef {AddInput & AddOptions} AddQuery
  * @typedef {AddAllInput & AddAllOptions} AddAllQuery
- *
- * @typedef {ArrayBuffer|ArrayBufferView|Blob|string|FileInput|RemoteIterable<ArrayBufferView|ArrayBuffer>} SingleFileInput
- * @typedef {RemoteIterable<ArrayBuffer|ArrayBufferView|Blob|string|FileInput>} MultiFileInput
- *
- * @typedef {Object} FileInput
- * @property {string} [path]
- * @property {FileContent} [content]
- * @property {Mode} [mode]
- * @property {Time} [mtime]
- *
- * @typedef {ArrayBufferView|ArrayBuffer|Blob|string|RemoteIterable<ArrayBufferView>|RemoteIterable<ArrayBuffer>} FileContent
- *
- * @typedef {Object} AddedEntry
- * @property {string} path
- * @property {EncodedCID} cid
- * @property {number} mode
- * @property {UnixFSTime} mtime
- * @property {number} size
- *
- * @typedef {Object} FileEntry
- * @property {string} path
- * @property {RemoteIterable<Uint8Array>} content
- * @property {Mode} [mode]
- * @property {UnixFSTime} [mtime]
- *
- *
- * @typedef {Object} EncodedLsEntry
- * @property {EncodedCID} cid
- * @property {FileType} type
- * @property {string} name
- * @property {string} path
- * @property {number} depth
- * @property {number} size
- * @property {Mode} mode
- * @property {UnixFSTime} [mtime]
  */
 
 exports.CoreService = class CoreService {
   /**
-   *
    * @param {IPFS} ipfs
    */
   constructor (ipfs) {
@@ -96,12 +66,7 @@ exports.CoreService = class CoreService {
   }
 
   /**
-   * @typedef {Object} AddAllResult
-   * @property {RemoteIterable<AddedEntry>} data
-   * @property {Transferable[]} transfer
-   *
    * @param {AddAllQuery} query
-   * @returns {AddAllResult}
    */
   addAll (query) {
     const { input } = query
@@ -112,7 +77,7 @@ exports.CoreService = class CoreService {
       hashAlg,
       onlyHash,
       pin,
-      progress,
+      progressCallback,
       rawLeaves,
       shardSplitThreshold,
       trickle,
@@ -121,12 +86,12 @@ exports.CoreService = class CoreService {
       signal
     } = query
 
-    let progressCallback
+    let progress
 
-    if (progress) {
-      const fn = decodeCallback(progress)
+    if (progressCallback) {
+      const fn = decodeCallback(progressCallback)
       /** @type {import('ipfs-core-types/src/root').AddProgressFn} */
-      progressCallback = (bytes, fileName) => { fn([bytes, fileName]) }
+      progress = (bytes, fileName) => { fn([bytes, fileName]) }
     }
 
     /** @type {AddAllOptions} */
@@ -142,7 +107,7 @@ exports.CoreService = class CoreService {
       trickle,
       wrapWithDirectory,
       timeout,
-      progress: progressCallback,
+      progress,
       signal
     }
 
@@ -151,12 +116,7 @@ exports.CoreService = class CoreService {
   }
 
   /**
-   * @typedef {Object} AddResult
-   * @property {AddedEntry} data
-   * @property {Transferable[]} transfer
-   *
    * @param {AddQuery} query
-   * @returns {Promise<AddResult>}
    */
   async add (query) {
     const { input } = query
@@ -166,7 +126,7 @@ exports.CoreService = class CoreService {
       hashAlg,
       onlyHash,
       pin,
-      progress,
+      progressCallback,
       rawLeaves,
       trickle,
       wrapWithDirectory,
@@ -174,12 +134,12 @@ exports.CoreService = class CoreService {
       signal
     } = query
 
-    let progressCallback
+    let progress
 
-    if (progress) {
-      const fn = decodeCallback(progress)
+    if (progressCallback) {
+      const fn = decodeCallback(progressCallback)
       /** @type {import('ipfs-core-types/src/root').AddProgressFn} */
-      progressCallback = (bytes, fileName) => { fn([bytes, fileName]) }
+      progress = (bytes, fileName) => { fn([bytes, fileName]) }
     }
 
     /** @type {AddOptions} */
@@ -193,7 +153,7 @@ exports.CoreService = class CoreService {
       trickle,
       wrapWithDirectory,
       timeout,
-      progress: progressCallback,
+      progress,
       signal
     }
 
@@ -209,12 +169,7 @@ exports.CoreService = class CoreService {
    * @property {number} [timeout]
    * @property {AbortSignal} [signal]
    *
-   * @typedef {Object} CatResult
-   * @property {RemoteIterable<Uint8Array>} data
-   * @property {Transferable[]} transfer
-   *
    * @param {CatQuery} query
-   * @returns {CatResult}
    */
   cat (query) {
     const { path, offset, length, timeout, signal } = query
@@ -231,12 +186,7 @@ exports.CoreService = class CoreService {
    * @property {number} [timeout]
    * @property {AbortSignal} [signal]
    *
-   * @typedef {Object} LsResult
-   * @property {RemoteIterable<EncodedLsEntry>} data
-   * @property {Transferable[]} transfer
-   *
    * @param {LsQuery} query
-   * @returns {LsResult}
    */
   ls (query) {
     const { path, recursive, preload, timeout, signal } = query
@@ -245,26 +195,19 @@ exports.CoreService = class CoreService {
     return encodeLsResult(entries)
   }
 }
-// @returns {string|ArrayBufferView|ArrayBuffer|Blob|AsyncIterable<string>|AsyncIterable<ArrayBufferView>|AsyncIterable<ArrayBuffer>|AsyncIterable<Blob>|AsyncIterable<FileObject>}
 
 /**
- * @param {MultiFileInput} input
- * @returns {AsyncIterable<string|ArrayBufferView|ArrayBuffer|Blob|FileObject>}
+ * @param {EncodedAddAllInput} input
+ * @returns {ImportSource}
  */
 const decodeAddAllInput = input =>
   decodeIterable(input, decodeFileInput)
 
-/**
- * @param {SingleFileInput} input
- * @returns {string|ArrayBufferView|ArrayBuffer|Blob|FileObject}
- */
+// @ts-ignore
 const decodeAddInput = input =>
   matchInput(
     input,
-    /**
-     * @param {*} data
-     * @returns {*}
-     */
+    // @ts-ignore
     data => {
       if (data.type === 'RemoteIterable') {
         return { content: decodeIterable(data, decodeFileInput) }
@@ -274,29 +217,23 @@ const decodeAddInput = input =>
     }
   )
 
-/**
- * @param {ArrayBufferView|ArrayBuffer|string|Blob|FileInput} input
- * @returns {string|ArrayBuffer|ArrayBufferView|Blob|FileObject}
- */
+// @ts-ignore
 const decodeFileInput = input =>
+  // @ts-ignore
   matchInput(input, file => ({
     ...file,
     content: file.content && decodeFileContent(file.content)
   }))
 
 /**
- * @param {FileContent} content
+ * @param {EncodedFileContent} content
  * @returns {DecodedFileContent}
  */
 const decodeFileContent = content =>
+  // @ts-ignore
   matchInput(content, input => decodeIterable(input, identity))
 
-/**
- * @template I,O
- * @param {string|ArrayBuffer|ArrayBufferView|Blob|I} input
- * @param {function(I):O} decode
- * @returns {string|ArrayBuffer|ArrayBufferView|Blob|O}
- */
+// @ts-ignore
 const matchInput = (input, decode) => {
   if (
     typeof input === 'string' ||
@@ -311,8 +248,7 @@ const matchInput = (input, decode) => {
 }
 
 /**
- * @param {AsyncIterable<ImportResult>} out
- * @returns {AddAllResult}
+ * @param {AsyncIterable<AddResult>} out
  */
 const encodeAddAllResult = out => {
   /** @type {Transferable[]} */
@@ -324,8 +260,7 @@ const encodeAddAllResult = out => {
 }
 
 /**
- * @param {ImportResult} out
- * @returns {AddResult}
+ * @param {AddResult} out
  */
 const encodeAddResult = out => {
   /** @type {Transferable[]} */
@@ -337,9 +272,7 @@ const encodeAddResult = out => {
 }
 
 /**
- *
  * @param {AsyncIterable<Uint8Array>} content
- * @returns {CatResult}
  */
 const encodeCatResult = content => {
   /** @type {Transferable[]} */
@@ -348,9 +281,7 @@ const encodeCatResult = content => {
 }
 
 /**
- *
- * @param {AsyncIterable<LsEntry>} entries
- * @returns {LsResult}
+ * @param {AsyncIterable<IPFSEntry>} entries
  */
 const encodeLsResult = entries => {
   /** @type {Transferable[]} */
@@ -359,9 +290,7 @@ const encodeLsResult = entries => {
 }
 
 /**
- *
- * @param {LsEntry} entry
- * @returns {EncodedLsEntry}
+ * @param {IPFSEntry} entry
  */
 const encodeLsEntry = ({ depth, name, path, size, cid, type, mode, mtime }) => ({
   cid: encodeCID(cid),
@@ -387,11 +316,9 @@ const moveBuffer = (buffer, transfer) => {
 }
 
 /**
- *
- * @param {FileOutput} file
+ * @param {AddResult} file
  * @param {Transferable[]} _transfer
  */
-
 const encodeFileOutput = (file, _transfer) => ({
   ...file,
   cid: encodeCID(file.cid)

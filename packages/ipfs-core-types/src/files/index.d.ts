@@ -5,18 +5,18 @@ import { CodecName } from 'multicodec'
 import { HashName } from 'multihashes'
 import { Mtime } from 'ipfs-unixfs'
 
-export interface API {
-  chmod: (path: string, mode: number | string, options?: ChmodOptions) => Promise<void>
-  cp: (from: IPFSPath | IPFSPath[], to: string, options?: CpOptions) => Promise<void>
-  mkdir: (path: string, options?: MkdirOptions) => Promise<void>
-  stat: (ipfsPath: IPFSPath, options?: StatOptions) => Promise<StatResult>
-  touch: (ipfsPath: string, options?: TouchOptions) => Promise<void>
-  rm: (ipfsPaths: string | string[], options?: RmOptions) => Promise<void>
-  read: (ipfsPath: IPFSPath, options?: ResolveOptions) => AsyncIterable<Uint8Array>
-  write: (ipfsPath: string, content: string | Uint8Array | Blob | AsyncIterable<Uint8Array> | Iterable<Uint8Array>, options?: WriteOptions) => Promise<void>
-  mv: (from: string | string[], to: string, options?: MvOptions) => Promise<void>
-  flush: (ipfsPath: string, options?: AbortOptions) => Promise<CID>
-  ls: (ipfsPath: IPFSPath, options?: AbortOptions) => AsyncIterable<MFSEntry>
+export interface API<OptionExtension = {}> {
+  chmod: (path: string, mode: number | string, options?: ChmodOptions & OptionExtension) => Promise<void>
+  cp: (from: IPFSPath | IPFSPath[], to: string, options?: CpOptions & OptionExtension) => Promise<void>
+  mkdir: (path: string, options?: MkdirOptions & OptionExtension) => Promise<void>
+  stat: (ipfsPath: IPFSPath, options?: StatOptions & OptionExtension) => Promise<StatResult>
+  touch: (ipfsPath: string, options?: TouchOptions & OptionExtension) => Promise<void>
+  rm: (ipfsPaths: string | string[], options?: RmOptions & OptionExtension) => Promise<void>
+  read: (ipfsPath: IPFSPath, options?: ResolveOptions & OptionExtension) => AsyncIterable<Uint8Array>
+  write: (ipfsPath: string, content: string | Uint8Array | Blob | AsyncIterable<Uint8Array> | Iterable<Uint8Array>, options?: WriteOptions & OptionExtension) => Promise<void>
+  mv: (from: string | string[], to: string, options?: MvOptions & OptionExtension) => Promise<void>
+  flush: (ipfsPath: string, options?: AbortOptions & OptionExtension) => Promise<CID>
+  ls: (ipfsPath: IPFSPath, options?: AbortOptions & OptionExtension) => AsyncIterable<MFSEntry>
 }
 
 export interface MFSEntry {

@@ -6,11 +6,15 @@ const { grpc } = require('@improbable-eng/grpc-web')
 
 const service = loadServices()
 
+/** @type {Record<string, string>} */
 const protocols = {
   'ws://': 'http://',
   'wss://': 'https://'
 }
 
+/**
+ * @param {{ url: string }} opts
+ */
 function normaliseUrls (opts) {
   Object.keys(protocols).forEach(protocol => {
     if (opts.url.startsWith(protocol)) {
@@ -20,14 +24,7 @@ function normaliseUrls (opts) {
 }
 
 /**
- * @typedef {import('http').Agent} HttpAgent
- * @typedef {import('https').Agent} HttpsAgent
- *
- * @typedef {Object} Options
- * @property {string|URL|import('multiaddr')} url - The URL to connect to as a URL or Multiaddr
- * @property {HttpAgent|HttpsAgent} [agent] - http.Agent used to control HTTP client behaviour (node.js only)
- *
- * @param {Options} [opts]
+ * @param {import('./types').Options} [opts]
  */
 module.exports = function createClient (opts = { url: '' }) {
   opts.url = toUrlString(opts.url)
@@ -36,10 +33,14 @@ module.exports = function createClient (opts = { url: '' }) {
   normaliseUrls(opts)
 
   const client = {
+    // @ts-ignore - TODO: fix after https://github.com/ipfs/js-ipfs/issues/3594
     addAll: require('./core-api/add-all')(grpc, service.Root.add, opts),
+    // @ts-ignore - TODO: fix after https://github.com/ipfs/js-ipfs/issues/3594
     id: require('./core-api/id')(grpc, service.Root.id, opts),
     files: {
+      // @ts-ignore - TODO: fix after https://github.com/ipfs/js-ipfs/issues/3594
       ls: require('./core-api/files/ls')(grpc, service.MFS.ls, opts),
+      // @ts-ignore - TODO: fix after https://github.com/ipfs/js-ipfs/issues/3594
       write: require('./core-api/files/write')(grpc, service.MFS.write, opts)
     }
   }

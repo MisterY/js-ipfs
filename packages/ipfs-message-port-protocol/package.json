@@ -13,11 +13,15 @@
     "src",
     "dist"
   ],
+  "types": "dist/src/index.d.ts",
   "typesVersions": {
     "*": {
-      "*": [
-        "dist/*",
-        "dist/*/index"
+      "src/*": [
+        "dist/src/*",
+        "dist/src/*/index"
+      ],
+      "src/": [
+        "dist/src/index"
       ]
     }
   },
@@ -27,6 +31,7 @@
     "url": "git+https://github.com/ipfs/js-ipfs.git"
   },
   "scripts": {
+    "prepare": "aegir build --no-bundle",
     "test": "aegir test",
     "test:node": "aegir test -t node",
     "test:browser": "aegir test -t browser",
@@ -44,7 +49,7 @@
     "ipld-block": "^0.11.0"
   },
   "devDependencies": {
-    "aegir": "^31.0.0",
+    "aegir": "^32.0.2",
     "rimraf": "^3.0.2",
     "uint8arrays": "^2.1.3"
   },

@@ -4,7 +4,16 @@ const peekable = require('it-peekable')
 const map = require('it-map')
 const { callbackify } = require('util')
 
+/**
+ * @param {import('ipfs-core-types').IPFS} ipfs
+ * @param {import('../../types').Options} options
+ */
 module.exports = function grpcMfsWrite (ipfs, options = {}) {
+  /**
+   * TODO: Fill out input/output types after https://github.com/ipfs/js-ipfs/issues/3594
+   *
+   * @type {import('../../types').ClientStreamingEndpoint<any, any, any>}
+   */
   async function mfsWrite (source, metadata) {
     const opts = {
       ...metadata

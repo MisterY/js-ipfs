@@ -26,7 +26,7 @@ export type HRTime = [number, number]
 export type Time = Date | LooseUnixFSTime | HRTime
 export type Mode = string | number
 export type HashAlg = string
-export type FileType = 'directory' | 'file'
+export type FileType = 'dir' | 'file'
 export type CIDVersion = 0 | 1
 
 export type Result<X, T> = { ok: true, value: T } | { ok: false, error: X }

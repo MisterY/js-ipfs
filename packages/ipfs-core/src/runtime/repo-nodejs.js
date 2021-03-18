@@ -10,7 +10,7 @@ const path = require('path')
  * @param {string} [options.path]
  * @param {boolean} options.autoMigrate
  */
-module.exports = (print, options) => {
+module.exports = (print, options = { autoMigrate: true }) => {
   const repoPath = options.path || path.join(os.homedir(), '.jsipfs')
   /**
    * @type {number}

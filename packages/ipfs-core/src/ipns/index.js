@@ -12,6 +12,7 @@ const IpnsRepublisher = require('./republisher')
 const IpnsResolver = require('./resolver')
 const TLRU = require('../utils/tlru')
 const defaultRecordTtl = 60 * 1000
+const uint8ArrayToString = require('uint8arrays/to-string')
 
 /**
  * @typedef {import('libp2p-crypto').PrivateKey} PrivateKey
@@ -49,7 +50,7 @@ class IPNS {
       const peerId = await createFromPrivKey(privKey.bytes)
       await this.publisher.publishWithEOL(privKey, value, lifetime)
 
-      log(`IPNS value ${value} was published correctly`)
+      log(`IPNS value ${uint8ArrayToString(value, 'base32')} was published correctly`)
 
       // // Add to cache
       const id = peerId.toB58String()
@@ -59,7 +60,7 @@ class IPNS {
 
       this.cache.set(id, value, ttl)
 
-      log(`IPNS value ${value} was cached correctly`)
+      log(`IPNS value ${uint8ArrayToString(value, 'base32')} was cached correctly`)
 
       return {
         name: id,

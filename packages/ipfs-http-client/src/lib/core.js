@@ -15,11 +15,16 @@ const DEFAULT_HOST = isBrowser || isWebWorker ? location.hostname : 'localhost'
 const DEFAULT_PORT = isBrowser || isWebWorker ? location.port : '5001'
 
 /**
+ * @typedef {import('native-fetch').Response} Response
+ */
+
+/**
  * @param {ClientOptions|URL|Multiaddr|string} [options]
  * @returns {ClientOptions}
  */
 const normalizeOptions = (options = {}) => {
   let url
+  /** @type {ClientOptions} */
   let opts = {}
   let agent
 
@@ -70,6 +75,9 @@ const normalizeOptions = (options = {}) => {
   }
 }
 
+/**
+ * @param {Response} response
+ */
 const errorHandler = async (response) => {
   let msg
 
@@ -109,12 +117,19 @@ const errorHandler = async (response) => {
 }
 
 const KEBAB_REGEX = /[A-Z\u00C0-\u00D6\u00D8-\u00DE]/g
+
+/**
+ * @param {string} str
+ */
 const kebabCase = (str) => {
   return str.replace(KEBAB_REGEX, function (match) {
     return '-' + match.toLowerCase()
   })
 }
 
+/**
+ * @param {string | number} value
+ */
 const parseTimeout = (value) => {
   return typeof value === 'string' ? parseDuration(value) : value
 }
@@ -184,6 +199,13 @@ class Client extends HTTP {
 
     const fetch = this.fetch
 
+    /**
+     * Fetch
+     *
+     * @param {string | Request} resource
+     * @param {import('ipfs-utils/src/types').HTTPOptions} options
+     * @returns {Response>}
+     */
     this.fetch = (resource, options = {}) => {
       if (typeof resource === 'string' && !resource.startsWith('/')) {
         resource = `${opts.url}/${resource}`

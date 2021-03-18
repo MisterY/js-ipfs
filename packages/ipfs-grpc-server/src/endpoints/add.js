@@ -5,7 +5,16 @@ const pushable = require('it-pushable')
 const { pipe } = require('it-pipe')
 const encodeMtime = require('../utils/encode-mtime')
 
+/**
+ * @param {import('ipfs-core-types').IPFS} ipfs
+ * @param {import('../types').Options} options
+ */
 module.exports = function grpcAdd (ipfs, options = {}) {
+  /**
+   * TODO: Fill out input/output types after https://github.com/ipfs/js-ipfs/issues/3594
+   *
+   * @type {import('../types').BidirectionalStreamingEndpoint<any, any, any>}
+   */
   async function add (source, sink, metadata) {
     const opts = {
       ...metadata,
@@ -94,7 +103,7 @@ module.exports = function grpcAdd (ipfs, options = {}) {
             ...result,
             type: 'RESULT',
             cid: result.cid.toString(),
-            ...encodeMtime(result.mtime)
+            ...encodeMtime(result.unixfs?.mtime)
           })
         }
 

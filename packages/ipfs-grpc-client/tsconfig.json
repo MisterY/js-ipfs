@@ -1,8 +1,7 @@
 {
-  "extends": "../../node_modules/aegir/src/config/tsconfig.aegir.json",
+  "extends": "aegir/src/config/tsconfig.aegir.json",
   "compilerOptions": {
-    "outDir": "dist",
-    "importsNotUsedAsValues": "preserve"
+    "outDir": "dist"
   },
   "include": [
     "src",

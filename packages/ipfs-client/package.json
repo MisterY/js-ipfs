@@ -14,14 +14,7 @@
     "dist"
   ],
   "main": "src/index.js",
-  "typesVersions": {
-    "*": {
-      "*": [
-        "dist/*",
-        "dist/*/index"
-      ]
-    }
-  },
+  "types": "dist/src/index.d.ts",
   "eslintConfig": {
     "extends": "ipfs"
   },
@@ -44,7 +37,7 @@
     "merge-options": "^3.0.4"
   },
   "devDependencies": {
-    "aegir": "^31.0.0",
+    "aegir": "^32.0.2",
     "rimraf": "^3.0.2"
   }
 }

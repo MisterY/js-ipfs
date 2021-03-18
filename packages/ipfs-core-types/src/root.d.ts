@@ -1,24 +1,24 @@
-import type { AbortOptions, PreloadOptions, IPFSPath, ImportSource, ToEntry, IPFSEntry } from './basic'
+import type { AbortOptions, PreloadOptions, IPFSPath, ImportSource, ToEntry } from './basic'
 import type CID, { CIDVersion } from 'cids'
-import type { ImportResult } from 'ipfs-unixfs-importer'
+import type { Mtime } from 'ipfs-unixfs'
 import type PeerId from 'peer-id'
 import type Multiaddr from 'multiaddr'
 import type { BaseName } from 'multibase'
 
-export interface API {
-  add: (entry: ToEntry, options?: AddOptions) => Promise<ImportResult>
-  addAll: (source: ImportSource, options?: AddAllOptions & AbortOptions) => AsyncIterable<ImportResult>
-  cat: (ipfsPath: IPFSPath, options?: CatOptions) => AsyncIterable<Uint8Array>
-  get: (ipfsPath: IPFSPath, options?: GetOptions) => AsyncIterable<IPFSEntry>
-  ls: (ipfsPath: IPFSPath, options?: ListOptions) => AsyncIterable<IPFSEntry>
+export interface API<OptionExtension = {}> {
+  add: (entry: ToEntry, options?: AddOptions & OptionExtension) => Promise<AddResult>
+  addAll: (source: ImportSource, options?: AddAllOptions & AbortOptions & OptionExtension) => AsyncIterable<AddResult>
+  cat: (ipfsPath: IPFSPath, options?: CatOptions & OptionExtension) => AsyncIterable<Uint8Array>
+  get: (ipfsPath: IPFSPath, options?: GetOptions & OptionExtension) => AsyncIterable<IPFSEntry>
+  ls: (ipfsPath: IPFSPath, options?: ListOptions & OptionExtension) => AsyncIterable<IPFSEntry>
 
-  id: (options?: AbortOptions) => Promise<IDResult>
-  version: (options?: AbortOptions) => Promise<VersionResult>
-  dns: (domain: string, options?: DNSOptions) => Promise<string>
+  id: (options?: AbortOptions & OptionExtension) => Promise<IDResult>
+  version: (options?: AbortOptions & OptionExtension) => Promise<VersionResult>
+  dns: (domain: string, options?: DNSOptions & OptionExtension) => Promise<string>
   start: () => Promise<void>
-  stop: (options?: AbortOptions) => Promise<void>
-  ping: (peerId: PeerId | CID, options?: PingOptions) => AsyncIterable<PingResult>
-  resolve: (name: string, options?: ResolveOptions) => Promise<string>
+  stop: (options?: AbortOptions & OptionExtension) => Promise<void>
+  ping: (peerId: PeerId | CID, options?: PingOptions & OptionExtension) => AsyncIterable<PingResult>
+  resolve: (name: string, options?: ResolveOptions & OptionExtension) => Promise<string>
   isOnline: () => boolean
 }
 
@@ -130,6 +130,14 @@ export interface AddAllOptions extends AddOptions {
    * sharded directories. (Defaults to 1000)
    */
   shardSplitThreshold?: number
+}
+
+export interface AddResult {
+  cid: CID
+  size: number
+  path: string
+  mode?: number
+  mtime?: Mtime
 }
 
 export interface ShardingOptions {

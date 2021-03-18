@@ -3,11 +3,11 @@ import CID from 'cids'
 import { CodecName } from 'multicodec'
 import { HashName } from 'multihashes'
 
-export interface API {
-  get: (cid: CID, options?: GetOptions) => Promise<GetResult>
-  put: (node: any, options?: PutOptions) => Promise<CID>
-  tree: (cid: CID, options?: TreeOptions) => Promise<string[]>
-  resolve: (ipfsPath: IPFSPath, options?: ResolveOptions) => Promise<ResolveResult>
+export interface API<OptionExtension = {}> {
+  get: (cid: CID, options?: GetOptions & OptionExtension) => Promise<GetResult>
+  put: (node: any, options?: PutOptions & OptionExtension) => Promise<CID>
+  tree: (cid: CID, options?: TreeOptions & OptionExtension) => Promise<string[]>
+  resolve: (ipfsPath: IPFSPath, options?: ResolveOptions & OptionExtension) => Promise<ResolveResult>
 }
 
 export interface GetOptions extends AbortOptions, PreloadOptions {

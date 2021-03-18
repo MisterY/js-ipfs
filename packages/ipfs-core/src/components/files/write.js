@@ -19,6 +19,10 @@ const {
 } = require('../../utils')
 const last = require('it-last')
 const withTimeoutOption = require('ipfs-core-utils/src/with-timeout-option')
+const {
+  parseMode,
+  parseMtime
+} = require('ipfs-unixfs')
 
 /**
  * @typedef {import('multihashes').HashName} HashName
@@ -258,18 +262,20 @@ const write = async (context, source, destination, options) => {
     }
   })
 
+  /** @type {number | undefined} */
   let mode
 
   if (options.mode !== undefined && options.mode !== null) {
-    mode = options.mode
+    mode = parseMode(options.mode)
   } else if (destination && destination.unixfs) {
     mode = destination.unixfs.mode
   }
 
+  /** @type {import('ipfs-unixfs').Mtime | undefined} */
   let mtime
 
   if (options.mtime != null) {
-    mtime = options.mtime
+    mtime = parseMtime(options.mtime)
   } else if (destination && destination.unixfs) {
     mtime = destination.unixfs.mtime
   }

@@ -8,14 +8,17 @@ const {
   isBytes,
   isBlob,
   isReadableStream,
-  isFileObject,
-  mtimeToObject,
-  modeToNumber
+  isFileObject
 } = require('./utils')
+const {
+  parseMtime,
+  parseMode
+} = require('ipfs-unixfs')
 
 /**
  * @typedef {import('ipfs-core-types/src/basic').ToContent} ToContent
  * @typedef {import('ipfs-unixfs-importer').ImportCandidate} ImportCandidate
+ * @typedef {import('ipfs-core-types/src/basic').ToEntry} ToEntry
  */
 
 /**
@@ -74,7 +77,7 @@ module.exports = async function * normaliseInput (input, normaliseContent) {
     // (Async)Iterable<String>
     // (Async)Iterable<{ path, content }>
     if (isFileObject(value) || isBlob(value) || typeof value === 'string' || value instanceof String) {
-      yield * map(peekable, (value) => toFileObject(value, normaliseContent))
+      yield * map(peekable, (/** @type {ToEntry} */ value) => toFileObject(value, normaliseContent))
       return
     }
 
@@ -83,7 +86,7 @@ module.exports = async function * normaliseInput (input, normaliseContent) {
     // ReadableStream<(Async)Iterable<?>>
     // ReadableStream<ReadableStream<?>>
     if (value[Symbol.iterator] || value[Symbol.asyncIterator] || isReadableStream(value)) {
-      yield * map(peekable, (value) => toFileObject(value, normaliseContent))
+      yield * map(peekable, (/** @type {ToEntry} */ value) => toFileObject(value, normaliseContent))
       return
     }
   }
@@ -100,7 +103,7 @@ module.exports = async function * normaliseInput (input, normaliseContent) {
 }
 
 /**
- * @param {import('ipfs-core-types/src/basic').ToEntry} input
+ * @param {ToEntry} input
  * @param {(content:ToContent) => AsyncIterable<Uint8Array>} normaliseContent
  */
 async function toFileObject (input, normaliseContent) {
@@ -110,8 +113,8 @@ async function toFileObject (input, normaliseContent) {
   /** @type {ImportCandidate} */
   const file = {
     path: path || '',
-    mode: modeToNumber(mode),
-    mtime: mtimeToObject(mtime)
+    mode: parseMode(mode),
+    mtime: parseMtime(mtime)
   }
 
   if (content) {

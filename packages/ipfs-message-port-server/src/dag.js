@@ -6,15 +6,11 @@ const collect = require('it-all')
 
 /**
  * @typedef {import('ipfs-core-types').IPFS} IPFS
- * @typedef {import('ipfs-message-port-protocol/src/cid').CID} CID
+ * @typedef {import('cids')} CID
  * @typedef {import('ipfs-message-port-protocol/src/cid').EncodedCID} EncodedCID
  * @typedef {import('ipfs-message-port-protocol/src/dag').DAGNode} DAGNode
  * @typedef {import('ipfs-message-port-protocol/src/dag').EncodedDAGNode} EncodedDAGNode
  * @typedef {import('ipfs-core-types/src/dag').PutOptions} PutOptions
- *
- * @typedef {Object} DAGEntry
- * @property {DAGNode} value
- * @property {string} remainderPath
  */
 
 exports.DAGService = class DAGService {
@@ -28,7 +24,7 @@ exports.DAGService = class DAGService {
   /**
    * @typedef {Object} PutDag
    * @property {EncodedDAGNode} dagNode
-   * @property {EncodedCID} [cid]
+   * @property {EncodedCID} [encodedCid]
    *
    * @param {PutOptions & PutDag} query
    * @returns {Promise<EncodedCID>}
@@ -38,13 +34,13 @@ exports.DAGService = class DAGService {
 
     const cid = await this.ipfs.dag.put(dagNode, {
       ...query,
-      cid: query.cid ? decodeCID(query.cid) : undefined
+      cid: query.encodedCid ? decodeCID(query.encodedCid) : undefined
     })
     return encodeCID(cid)
   }
 
   /**
-   * @typedef {Object} GetResult
+   * @typedef {Object} EncodedGetResult
    * @property {Transferable[]} transfer
    * @property {string} [remainderPath]
    * @property {EncodedDAGNode} value
@@ -57,7 +53,7 @@ exports.DAGService = class DAGService {
    * @property {AbortSignal} [signal]
    *
    * @param {GetDAG} query
-   * @returns {Promise<GetResult>}
+   * @returns {Promise<EncodedGetResult>}
    */
   async get (query) {
     const { cid, path, localResolve, timeout, signal } = query
@@ -83,12 +79,12 @@ exports.DAGService = class DAGService {
    * @property {number} [timeout]
    * @property {AbortSignal} [signal]
    *
-   * @typedef {Object} ResolveResult
+   * @typedef {Object} EncodedResolveResult
    * @property {EncodedCID} cid
-   * @property {string|void} remainderPath
+   * @property {string} [remainderPath]
    *
    * @param {ResolveQuery} query
-   * @returns {Promise<ResolveResult>}
+   * @returns {Promise<EncodedResolveResult>}
    */
   async resolve (query) {
     const { cid, remainderPath } =
@@ -136,8 +132,3 @@ const decodePathOrCID = (input) => {
     return decodeCID(input)
   }
 }
-
-/**
- * @param {EncodedDAGNode} value
- * @returns {DAGNode}
- */

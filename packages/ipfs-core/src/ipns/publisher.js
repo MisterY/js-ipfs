@@ -281,7 +281,7 @@ class IpnsPublisher {
       // Store the new record
       await this._datastore.put(ipns.getLocalKey(peerId.id), data)
 
-      log(`ipns record for ${value} was stored in the datastore`)
+      log(`ipns record for ${uint8ArrayToString(value, 'base32')} was stored in the datastore`)
 
       return entryData
     } catch (err) {

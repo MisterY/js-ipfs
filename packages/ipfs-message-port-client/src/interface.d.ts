@@ -55,3 +55,7 @@ export type APIMethodWithExtraOptions <
   Key extends keyof API,
   Extra
 > = API[Key] extends (...args: any[]) => any ? APIWithExtraOptions<API[Key], Extra> : never
+
+export interface MessagePortClientOptions {
+  transfer?: Transferable[]
+}

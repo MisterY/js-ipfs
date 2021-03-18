@@ -4,11 +4,11 @@ import Block from 'ipld-block'
 import { CodecName } from 'multicodec'
 import { HashName } from 'multihashes'
 
-export interface API {
-  get: (cid: CID | string | Uint8Array, options?: AbortOptions & PreloadOptions) => Promise<Block>
-  put: (block: Block | Uint8Array, options?: PutOptions) => Promise<Block>
-  rm: (cid: CID | CID[], options?: RmOptions) => AsyncIterable<RmResult>
-  stat: (ipfsPath: IPFSPath, options?: AbortOptions & PreloadOptions) => Promise<StatResult>
+export interface API<OptionExtension = {}> {
+  get: (cid: CID | string | Uint8Array, options?: AbortOptions & PreloadOptions & OptionExtension) => Promise<Block>
+  put: (block: Block | Uint8Array, options?: PutOptions & OptionExtension) => Promise<Block>
+  rm: (cid: CID | CID[], options?: RmOptions & OptionExtension) => AsyncIterable<RmResult>
+  stat: (ipfsPath: IPFSPath, options?: AbortOptions & PreloadOptions & OptionExtension) => Promise<StatResult>
 }
 
 export interface PutOptions extends AbortOptions, PreloadOptions {
