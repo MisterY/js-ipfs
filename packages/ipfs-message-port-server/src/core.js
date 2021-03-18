@@ -15,20 +15,10 @@ const { decodeCID, encodeCID } = require('ipfs-message-port-protocol/src/cid')
  * @typedef {import('ipfs-core-types/src/root').AddOptions} AddOptions
  * @typedef {import('ipfs-core-types/src/root').AddAllOptions} AddAllOptions
  * @typedef {import('ipfs-core-types/src/root').IPFSEntry} IPFSEntry
- * @typedef {import("ipfs-message-port-protocol/src/data").Time} Time
- * @typedef {import("ipfs-message-port-protocol/src/data").Mode} Mode
- * @typedef {import("ipfs-message-port-protocol/src/data").HashAlg} HashAlg
- * @typedef {import('ipfs-message-port-protocol/src/data').FileType} FileType
  * @typedef {import('ipfs-message-port-protocol/src/cid').EncodedCID} EncodedCID
- * @typedef {import("./ipfs").FileOutput} FileOutput
- * @typedef {import('./ipfs').FileContent} DecodedFileContent
- * @typedef {import('./ipfs').FileInput} DecodedFileInput
  * @typedef {import('ipfs-core-types/src/basic').ImportSource} ImportSource
  * @typedef {import('ipfs-core-types/src/basic').ToEntry} ToEntry
  * @typedef {import('ipfs-core-types/src/root').AddResult} AddResult
- * @typedef {import('ipfs-unixfs-importer').ImportCandidate} ImportCandidate
- * @typedef {import('ipfs-unixfs').Mtime} Mtime
- *
  * @typedef {import('ipfs-message-port-protocol/src/root').EncodedAddInput} EncodedAddInput
  * @typedef {import('ipfs-message-port-protocol/src/root').EncodedAddAllInput} EncodedAddAllInput
  * @typedef {import('ipfs-message-port-protocol/src/root').EncodedFileContent} EncodedFileContent
@@ -227,7 +217,6 @@ const decodeFileInput = input =>
 
 /**
  * @param {EncodedFileContent} content
- * @returns {DecodedFileContent}
  */
 const decodeFileContent = content =>
   // @ts-ignore
