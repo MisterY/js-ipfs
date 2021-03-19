@@ -28,6 +28,11 @@ export interface PutOptions extends AbortOptions, PreloadOptions {
   mhtype?: HashName
 
   /**
+   * @deprecated
+   */
+  mhlen?: any
+
+  /**
    * The version to use to create the CID
    */
   version?: CIDVersion

@@ -6,12 +6,12 @@ import type CID from 'cid'
 import type BigInteger from 'bignumber.js'
 import type Multiaddr from 'multiaddr'
 
-export interface API {
-  addrs: (options?: AbortOptions) => Promise<AddrsResult[]>
-  connect: (addr: Multiaddr, options?: AbortOptions) => Promise<void>
-  disconnect: (addr: Multiaddr, options?: AbortOptions) => Promise<void>
-  localAddrs: (options?: AbortOptions) => Promise<Multiaddr[]>
-  peers: (options?: PeersOptions) => Promise<PeersResult[]>
+export interface API<OptionExtension = {}> {
+  addrs: (options?: AbortOptions & OptionExtension) => Promise<AddrsResult[]>
+  connect: (addr: Multiaddr | Multiaddr[], options?: AbortOptions & OptionExtension) => Promise<void>
+  disconnect: (addr: Multiaddr | Multiaddr[], options?: AbortOptions & OptionExtension) => Promise<void>
+  localAddrs: (options?: AbortOptions & OptionExtension) => Promise<Multiaddr[]>
+  peers: (options?: PeersOptions & OptionExtension) => Promise<PeersResult[]>
 }
 
 export interface AddrsResult {

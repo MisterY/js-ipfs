@@ -3,8 +3,16 @@
 const configure = require('../lib/configure')
 const toUrlSearchParams = require('../lib/to-url-search-params')
 
+/**
+ * @typedef {import('../types').HTTPClientExtraOptions} HTTPClientExtraOptions
+ * @typedef {import('ipfs-core-types/src/swarm').API<HTTPClientExtraOptions>} SwarmAPI
+ */
+
 module.exports = configure(api => {
-  return async (addrs, options = {}) => {
+  /**
+   * @type {SwarmAPI["disconnect"]}
+   */
+  async function disconnect (addrs, options = {}) {
     addrs = Array.isArray(addrs) ? addrs : [addrs]
 
     const res = await api.post('swarm/disconnect', {
@@ -20,4 +28,5 @@ module.exports = configure(api => {
 
     return Strings || []
   }
+  return disconnect
 })

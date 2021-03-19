@@ -1,30 +1,30 @@
 import type { AbortOptions } from '../basic'
 import { API as ProfilesAPI} from './profiles'
 
-export interface API {
+export interface API<OptionExtension = {}> {
   /**
    * Returns a value from the currently being used config. If the daemon
    * is off, it returns the value from the stored config.
    */
-  get: (key: string, options?: AbortOptions) => Promise<string | object>
+  get: (key: string, options?: AbortOptions & OptionExtension) => Promise<string | object>
 
   /**
    * Returns the full config been used. If the daemon is off, it returns the
    * stored config
    */
-  getAll: (options?: AbortOptions) => Promise<Config>
+  getAll: (options?: AbortOptions & OptionExtension) => Promise<Config>
 
   /**
    * Adds or replaces a config value. Note that restarting the node will be
    * necessary for any change to take effect.
    */
-  set: (key: string, value: any, options?: AbortOptions) => Promise<void>
+  set: (key: string, value: any, options?: AbortOptions & OptionExtension) => Promise<void>
 
   /**
    * Replaces the full config. Note that restarting the node will be
    * necessary for any change to take effect.
    */
-  replace: (config: Config, options?: AbortOptions) => Promise<void>
+  replace: (config: Config, options?: AbortOptions & OptionExtension) => Promise<void>
 
   profiles: ProfilesAPI
 }

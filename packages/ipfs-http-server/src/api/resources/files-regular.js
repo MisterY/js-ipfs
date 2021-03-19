@@ -6,6 +6,7 @@ const tar = require('it-tar')
 const log = Object.assign(debug('ipfs:http-api:files'), {
   error: debug('ipfs:http-api:files:error')
 })
+// @ts-ignore no types
 const toIterable = require('stream-to-it')
 const Joi = require('../../utils/joi')
 const Boom = require('@hapi/boom')

@@ -2,7 +2,7 @@ import CID from 'cids';
 import type { AbortOptions } from '../basic'
 import type { API as PubsubAPI } from './pubsub'
 
-export interface API {
+export interface API<OptionExtension = {}> {
    /**
    * IPNS is a PKI namespace, where names are the hashes of public keys, and
    * the private key enables publishing new (signed) values. In both publish
@@ -20,7 +20,7 @@ export interface API {
    * console.log(`https://gateway.ipfs.io/ipns/${res.name}`)
    * ```
    */
-  publish: (value: CID, options?: PublishOptions) => Promise<PublishResult>
+  publish: (value: CID, options?: PublishOptions & OptionExtension) => Promise<PublishResult>
 
   /**
    * Given a key, query the DHT for its best value.
@@ -36,7 +36,7 @@ export interface API {
    * // Logs: /ipfs/QmQrX8hka2BtNHa8N8arAq16TCVx5qHcb46c5yPewRycLm
    * ```
    */
-  resolve: (value: string, options?: ResolveOptions) => AsyncIterable<string>
+  resolve: (value: string, options?: ResolveOptions & OptionExtension) => AsyncIterable<string>
 
   pubsub: PubsubAPI
 }

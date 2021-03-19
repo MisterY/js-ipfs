@@ -1,5 +1,8 @@
 'use strict'
 
+/**
+ * @param {import("../lib/core").ClientOptions} config
+ */
 module.exports = config => ({
   chmod: require('./chmod')(config),
   cp: require('./cp')(config),

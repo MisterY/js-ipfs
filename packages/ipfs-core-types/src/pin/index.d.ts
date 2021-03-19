@@ -2,12 +2,12 @@ import type { AbortOptions, AwaitIterable } from '../basic'
 import type CID from 'cids'
 import type { API as remote } from './remote'
 
-export interface API {
-  add: (cid: string | CID, options?: AddOptions) => Promise<CID>
-  addAll: (source: AwaitIterable<AddInput>, options?: AddAllOptions) => AsyncIterable<CID>
-  ls: (options?: LsOptions) => AsyncIterable<LsResult>
-  rm: (ipfsPath: string | CID, options?: RmOptions) => Promise<CID>
-  rmAll: (source: AwaitIterable<RmAllInput>, options?: AbortOptions) => AsyncIterable<CID>
+export interface API<OptionExtension = {}> {
+  add: (cid: string | CID, options?: AddOptions & OptionExtension) => Promise<CID>
+  addAll: (source: AwaitIterable<AddInput>, options?: AddAllOptions & OptionExtension) => AsyncIterable<CID>
+  ls: (options?: LsOptions & OptionExtension) => AsyncIterable<LsResult>
+  rm: (ipfsPath: string | CID, options?: RmOptions & OptionExtension) => Promise<CID>
+  rmAll: (source: AwaitIterable<RmAllInput>, options?: AbortOptions & OptionExtension) => AsyncIterable<CID>
 
   remote
 }

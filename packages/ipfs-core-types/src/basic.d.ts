@@ -1,6 +1,6 @@
 import CID from 'cids'
 import { AwaitIterable } from './basic'
-import { Mtime } from 'ipfs-unixfs'
+import { Mtime, MtimeLike } from 'ipfs-unixfs'
 
 export type Entry<Content extends AsyncIterable<Uint8Array>|Blob> =
   | FileEntry<Content>
@@ -40,7 +40,7 @@ export interface ToDirectory extends ToFileMetadata {
 
 export interface ToFileMetadata {
   mode?: ToMode
-  mtime?: ToMTime
+  mtime?: MtimeLike
 }
 
 /**
@@ -57,15 +57,6 @@ export type ToContent =
   | AwaitIterable<Uint8Array>
   | ReadableStream<Uint8Array>
 
-/**
- * Timestamp representation in arbitrary (supported) in representations. It is
- * used in input positions and usually gets normalised to `MTime` before use.
- */
-export type ToMTime =
-  | Date
-  | HRTime
-  | MTimeLike
-
 export type ToMode =
   | string
   | number
@@ -79,25 +70,6 @@ export interface BaseFile {
 export interface InputFile extends BaseFile {
   unixfs: undefined
 }
-
-export interface MTimeLike {
-  /**
-   * The number of seconds since (positive) or before (negative) the Unix Epoch
-   * began.
-   */
-  secs: number
-
-  /**
-   * The number of nanoseconds since the last full second
-   */
-  nsecs?: number
-}
-
-/**
- * Time representation as tuple of two integers, as per the output of
- * [`process.hrtime()`](https://nodejs.org/dist/latest/docs/api/process.html#process_process_hrtime_time).
- */
-type HRTime = [number, number]
 
 export interface BrowserImportCandidate {
   path?: string,

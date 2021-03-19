@@ -5,10 +5,10 @@ import type PeerId from 'peer-id'
 import type CID from 'cid'
 import type BigInteger from 'bignumber.js'
 
-export interface API {
-  bitswap: BitswapAPI["stat"]
-  repo: RepoAPI["stat"]
-  bw: (options?: BWOptions) => AsyncIterable<BWResult>
+export interface API<OptionExtension = {}> {
+  bitswap: BitswapAPI<OptionExtension>["stat"]
+  repo: RepoAPI<OptionExtension>["stat"]
+  bw: (options?: BWOptions & OptionExtension) => AsyncIterable<BWResult>
 }
 
 export interface BWOptions extends AbortOptions {

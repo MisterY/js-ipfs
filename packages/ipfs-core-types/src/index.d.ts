@@ -5,8 +5,10 @@ import { API as BootstrapAPI } from './bootstrap'
 import { API as ConfigAPI } from './config'
 import { API as DAGAPI } from './dag'
 import { API as DHTAPI } from './dht'
+import { API as DiagAPI } from './diag'
 import { API as FilesAPI } from './files'
 import { API as KeyAPI } from './key'
+import { API as LogAPI } from './log'
 import { API as NameAPI } from './name'
 import { API as ObjectAPI } from './object'
 import { API as PinAPI } from './pin'
@@ -24,8 +26,10 @@ export interface IPFS extends RootAPI {
   config: ConfigAPI
   dag: DAGAPI
   dht: DHTAPI
+  diag: DiagAPI
   files: FilesAPI
   key: KeyAPI
+  log: LogAPI
   name: NameAPI
   object: ObjectAPI
   pin: PinAPI

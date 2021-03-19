@@ -19,6 +19,8 @@ export interface API<OptionExtension = {}> {
   stop: (options?: AbortOptions & OptionExtension) => Promise<void>
   ping: (peerId: PeerId | CID, options?: PingOptions & OptionExtension) => AsyncIterable<PingResult>
   resolve: (name: string, options?: ResolveOptions & OptionExtension) => Promise<string>
+  commands: (options?: AbortOptions & OptionExtension) => Promise<string[]>
+  mount: (options?: MountOptions & OptionExtension) => Promise<MountResult>
   isOnline: () => boolean
 }
 
@@ -204,4 +206,15 @@ export interface PingResult {
 export interface ResolveOptions extends AbortOptions {
   recursive?: boolean
   cidBase?: BaseName
+}
+
+export interface MountOptions extends AbortOptions {
+  ipfsPath?: string
+  ipnsPath?: string
+}
+
+export interface MountResult {
+  fuseAllowOther?: boolean
+  ipfs?: string
+  ipns?: string
 }

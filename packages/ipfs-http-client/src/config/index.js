@@ -1,5 +1,8 @@
 'use strict'
 
+/**
+ * @param {import("../lib/core").ClientOptions} config
+ */
 module.exports = config => ({
   getAll: require('./getAll')(config),
   get: require('./get')(config),

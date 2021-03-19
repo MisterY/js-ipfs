@@ -1,12 +1,12 @@
-import type { AbortOptions, PreloadOptions } from '../basic'
+import type { AbortOptions, PreloadOptions, IPFSPath } from '../basic'
 import type CID from 'cids'
 
-export type API = {
-  refs: Refs
-  local: Local
+export type API<OptionExtension = {}> = {
+  refs: Refs<OptionExtension>
+  local: Local<OptionExtension>
 }
 
-export type Refs = (ipfsPath: string | CID, options?: RefsOptions) => AsyncIterable<RefsResult>
+export type Refs<OptionExtension> = (ipfsPath: IPFSPath | IPFSPath[], options?: RefsOptions & OptionExtension) => AsyncIterable<RefsResult>
 
 export interface RefsOptions extends AbortOptions, PreloadOptions {
   recursive?: boolean
@@ -16,7 +16,7 @@ export interface RefsOptions extends AbortOptions, PreloadOptions {
   maxDepth?: number
 }
 
-export type Local = (options?: AbortOptions) => AsyncIterable<RefsResult>
+export type Local<OptionExtension> = (options?: AbortOptions & OptionExtension) => AsyncIterable<RefsResult>
 
 export interface RefsResult {
   ref: string

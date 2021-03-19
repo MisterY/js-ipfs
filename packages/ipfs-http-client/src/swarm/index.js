@@ -1,5 +1,8 @@
 'use strict'
 
+/**
+ * @param {import("../lib/core").ClientOptions} config
+ */
 module.exports = config => ({
   addrs: require('./addrs')(config),
   connect: require('./connect')(config),

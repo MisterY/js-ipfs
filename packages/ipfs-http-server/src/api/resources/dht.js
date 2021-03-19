@@ -7,6 +7,7 @@ const ndjson = require('iterable-ndjson')
 const toStream = require('it-to-stream')
 const { map } = require('streaming-iterables')
 const { PassThrough } = require('stream')
+// @ts-ignore no types
 const toIterable = require('stream-to-it')
 const debug = require('debug')
 const log = Object.assign(debug('ipfs:http-api:dht'), {

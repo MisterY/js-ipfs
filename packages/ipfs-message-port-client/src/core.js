@@ -11,7 +11,7 @@ const {
   encodeCallback
 } = require('ipfs-message-port-protocol/src/core')
 /** @type {<T>(stream:ReadableStream<T>) => AsyncIterable<T>} */
-// @ts-ignore - browser-stream-to-it has not types
+// @ts-ignore - browser-stream-to-it has no types
 const iterateReadableStream = require('browser-readablestream-to-it')
 const {
   parseMode,

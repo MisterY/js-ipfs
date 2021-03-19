@@ -1,7 +1,11 @@
 'use strict'
 
+/**
+ * @param {import("../lib/core").ClientOptions} config
+ */
 module.exports = config => ({
   get: require('./get')(config),
   put: require('./put')(config),
-  resolve: require('./resolve')(config)
+  resolve: require('./resolve')(config),
+  tree: require('./tree')(config)
 })

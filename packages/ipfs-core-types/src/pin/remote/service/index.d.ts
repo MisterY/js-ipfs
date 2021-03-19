@@ -1,22 +1,22 @@
 import { AbortOptions } from '../../../basic'
 
-export interface API {
+export interface API<OptionExtension = {}> {
   /**
    * Registers remote pinning service with a given name. Errors if service
    * with the given name is already registered.
    */
-  add: (name: string, credentials: Credentials & AbortOptions) => Promise<void>
+  add: (name: string, credentials: Credentials & AbortOptions & OptionExtension) => Promise<void>
 
   /**
-   * Unregisteres remote pinning service with a given name. If service with such
-   * name isn't registerede this is a noop.
+   * Unregisters remote pinning service with a given name. If service with such
+   * name isn't registered this is a noop.
    */
-  rm: (name: string, options?: AbortOptions) => Promise<void>
+  rm: (name: string, options?: AbortOptions & OptionExtension) => Promise<void>
 
   /**
    * List registered remote pinning services.
    */
-  ls: ((options: { stat: true } & AbortOptions) => Promise<RemotePinServiceWithStat[]>) & ((options?: AbortOptions) => Promise<RemotePinService[]>)
+  ls: ((options: { stat: true } & AbortOptions & OptionExtension) => Promise<RemotePinServiceWithStat[]>) & ((options?: AbortOptions & OptionExtension) => Promise<RemotePinService[]>)
 }
 
 export interface Credentials {

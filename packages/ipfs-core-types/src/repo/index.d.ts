@@ -2,10 +2,10 @@ import type { AbortOptions } from '../basic'
 import type BigInteger from 'bignumber.js'
 import CID from 'cids'
 
-export interface API {
-  gc: (options?: GCOptions) => AsyncIterable<GCResult>
-  stat: (options?: StatOptions) => Promise<StatResult>
-  version: (options?: AbortOptions) => Promise<number>
+export interface API<OptionExtension = {}> {
+  gc: (options?: GCOptions & OptionExtension) => AsyncIterable<GCResult>
+  stat: (options?: AbortOptions & OptionExtension) => Promise<StatResult>
+  version: (options?: AbortOptions & OptionExtension) => Promise<number>
 }
 
 export interface GCOptions extends AbortOptions {
@@ -21,10 +21,6 @@ export interface GCSuccess {
 }
 
 export type GCResult  = GCSuccess | GCError
-
-export interface StatOptions extends AbortOptions {
-  human: boolean
-}
 
 export interface StatResult {
   numObjects: BigInteger

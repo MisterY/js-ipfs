@@ -1,5 +1,8 @@
 'use strict'
 
+/**
+ * @param {import("../../lib/core").ClientOptions} config
+ */
 module.exports = config => ({
   addLink: require('./add-link')(config),
   appendData: require('./append-data')(config),

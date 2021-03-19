@@ -3,6 +3,7 @@
 const { PassThrough } = require('stream')
 const { pipe } = require('it-pipe')
 const log = require('debug')('ipfs:http-api:utils:stream-response')
+// @ts-ignore no types
 const toIterable = require('stream-to-it')
 
 const errorTrailer = 'X-Stream-Error'

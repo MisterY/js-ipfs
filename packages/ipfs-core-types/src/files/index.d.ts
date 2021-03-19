@@ -306,7 +306,7 @@ export interface WriteOptions extends MFSOptions, AbortOptions {
   shardSplitThreshold?: number
 }
 
-export interface MvOptions extends  extends MFSOptions, AbortOptions {
+export interface MvOptions extends MFSOptions, AbortOptions {
   /**
    * Create intermediate MFS paths if they do not exist
    */

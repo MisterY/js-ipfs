@@ -4,16 +4,27 @@ const multiaddr = require('multiaddr')
 const configure = require('../lib/configure')
 const toUrlSearchParams = require('../lib/to-url-search-params')
 
+/**
+ * @typedef {import('../types').HTTPClientExtraOptions} HTTPClientExtraOptions
+ * @typedef {import('ipfs-core-types/src/swarm').API<HTTPClientExtraOptions>} SwarmAPI
+ */
+
 module.exports = configure(api => {
-  return async (options = {}) => {
-    const res = await (await api.post('swarm/peers', {
+  /**
+   * @type {SwarmAPI["peers"]}
+   */
+  async function peers (options = {}) {
+    const res = await api.post('swarm/peers', {
       timeout: options.timeout,
       signal: options.signal,
       searchParams: toUrlSearchParams(options),
       headers: options.headers
-    })).json()
+    })
 
-    return (res.Peers || []).map(peer => {
+    /** @type {{ Peers: { Peer: string, Addr: string, Muxer?: string, Latency?: string, Streams?: string[], Direction?: 0 | 1 }[] }} */
+    const { Peers } = await res.json()
+
+    return (Peers || []).map(peer => {
       const info = {}
       try {
         info.addr = multiaddr(peer.Addr)
@@ -37,4 +48,5 @@ module.exports = configure(api => {
       return info
     })
   }
+  return peers
 })

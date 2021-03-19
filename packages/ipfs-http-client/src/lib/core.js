@@ -15,7 +15,9 @@ const DEFAULT_HOST = isBrowser || isWebWorker ? location.hostname : 'localhost'
 const DEFAULT_PORT = isBrowser || isWebWorker ? location.port : '5001'
 
 /**
- * @typedef {import('native-fetch').Response} Response
+ * @typedef {import('electron-fetch').Response} Response
+ * @typedef {import('ipfs-utils/dist/types/electron-fetch').Request} Request
+ * @typedef {import('ipfs-utils/src/types').HTTPOptions} HTTPOptions
  */
 
 /**
@@ -100,12 +102,12 @@ const errorHandler = async (response) => {
 
   // This is what go-ipfs returns where there's a timeout
   if (msg && msg.includes('context deadline exceeded')) {
-    error = new HTTP.TimeoutError(response)
+    error = new HTTP.TimeoutError('Request timed out')
   }
 
   // This also gets returned
   if (msg && msg.includes('request timed out')) {
-    error = new HTTP.TimeoutError(response)
+    error = new HTTP.TimeoutError('Request timed out')
   }
 
   // If we managed to extract a message from the response, use it
@@ -159,7 +161,7 @@ class Client extends HTTP {
     const opts = normalizeOptions(options)
 
     super({
-      timeout: parseTimeout(opts.timeout) || 60000 * 20,
+      timeout: parseTimeout(opts.timeout || 0) || 60000 * 20,
       headers: opts.headers,
       base: `${opts.url}`,
       handleError: errorHandler,
@@ -200,11 +202,9 @@ class Client extends HTTP {
     const fetch = this.fetch
 
     /**
-     * Fetch
-     *
      * @param {string | Request} resource
-     * @param {import('ipfs-utils/src/types').HTTPOptions} options
-     * @returns {Response>}
+     * @param {HTTPOptions} options
+     * @returns {Promise<import('ipfs-utils/dist/types/electron-fetch').Response>}
      */
     this.fetch = (resource, options = {}) => {
       if (typeof resource === 'string' && !resource.startsWith('/')) {
